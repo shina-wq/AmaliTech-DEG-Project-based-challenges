@@ -1,6 +1,9 @@
-import { LuSearch, LuShield, LuUpload } from 'react-icons/lu'
+import { useState } from 'react'
+import { LuSearch, LuShield, LuUpload, LuX } from 'react-icons/lu'
 
 export function Header() {
+  const [searchOpen, setSearchOpen] = useState(false)
+
   return (
     <header className="relative flex h-14 shrink-0 items-center border-b border-border bg-surface px-4">
       {/* Logo */}
@@ -36,19 +39,37 @@ export function Header() {
         {/* Mobile: standalone icon-only search trigger */}
         <button
           type="button"
-          aria-label="Search"
-          className="flex h-9 w-9 items-center justify-center rounded-md text-text-muted hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent md:hidden"
+          aria-label={searchOpen ? 'Close search' : 'Search'}
+          onClick={() => setSearchOpen((open) => !open)}
+          className="flex h-9 w-9 items-center justify-center rounded-md text-text-muted hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent md:hidden cursor-pointer"
         >
-          <LuSearch size={18} aria-hidden="true" />
+          {searchOpen ? (
+            <LuX size={18} aria-hidden="true" />
+          ) : (
+            <LuSearch size={18} aria-hidden="true" />
+          )}
         </button>
+
+        {searchOpen && (
+          <div className="absolute inset-x-4 top-full z-10 mt-2 flex items-center gap-2 rounded-md border border-border bg-bg px-3 py-2 shadow-lg transition-colors focus-within:border-accent/60 md:hidden">
+            <LuSearch size={14} className="shrink-0 text-text-dim" aria-hidden="true" />
+
+            <input
+              type="search"
+              autoFocus
+              placeholder="Search files and folders..."
+              className="w-full bg-transparent text-sm text-text placeholder:text-text-dim focus:outline-none"
+            />
+          </div>
+        )}
 
         {/* Mobile: standalone icon-only upload trigger */}
         <button
           type="button"
           aria-label="Upload file"
-          className="flex h-9 w-9 items-center justify-center rounded-md text-text-muted hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent md:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-bg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg md:hidden cursor-pointer"
         >
-          <LuUpload size={18} aria-hidden="true" />
+          <LuUpload size={18} strokeWidth={2.5} aria-hidden="true" />
         </button>
 
         {/* Desktop */}
