@@ -7,12 +7,13 @@ import type { FileNode } from './types/tree'
 
 function App() {
   const [selectedFile, setSelectedFile] = useState<FileNode | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-bg text-text">
-      <Header />
+      <Header searchQuery={searchQuery} onSearchChange={setSearchQuery}/>
       <main className="flex flex-1 flex-col overflow-hidden md:flex-row">
-        <FileExplorer selectedFile={selectedFile} onSelectFile={setSelectedFile} />
+        <FileExplorer searchQuery={searchQuery} selectedFile={selectedFile} onSelectFile={setSelectedFile} />
         <PropertiesPanel selectedFile={selectedFile} />
       </main>
       <PropertiesDrawer selectedFile={selectedFile} />

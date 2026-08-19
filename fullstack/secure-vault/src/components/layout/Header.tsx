@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { LuSearch, LuShield, LuUpload, LuX } from 'react-icons/lu'
 
-export function Header() {
+interface HeaderProps {
+  searchQuery: string
+  onSearchChange: (value: string) => void
+}
+
+export function Header({searchQuery, onSearchChange}: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false)
 
   return (
@@ -29,6 +34,8 @@ export function Header() {
 
         <input
           type="search"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search files and folders..."
           className="w-full bg-transparent text-sm text-text placeholder:text-text-dim focus-visible:outline-none"
         />
@@ -56,6 +63,8 @@ export function Header() {
 
             <input
               type="search"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
               autoFocus
               placeholder="Search files and folders..."
               className="w-full bg-transparent text-sm text-text placeholder:text-text-dim focus:outline-none"

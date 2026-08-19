@@ -2,24 +2,34 @@ import { useMemo, useState } from 'react'
 import data from '../../data/data.json'
 import type { TreeNode as TreeNodeType, FileNode } from '../../types/tree'
 import { TreeNode } from './TreeNode'
-import { buildParentMap, getVisibleNodes } from '../../utils/tree'
+import { buildParentMap, filterTree, getVisibleNodes } from '../../utils/tree'
 import { useTreeNavigation } from '../../hooks/useTreeNavigation'
 
 const treeData = data as TreeNodeType[]
-const parentMap = buildParentMap(treeData) // static data → build once, module scope
+const parentMap = buildParentMap(treeData)
 
 function countFiles(nodes: TreeNodeType[]): number {
   return nodes.reduce((sum, node) => sum + (node.type === 'file' ? 1 : countFiles(node.children)), 0)
 }
 
 interface FileExplorerProps {
+  searchQuery: string
   selectedFile: FileNode | null
   onSelectFile: (file: FileNode) => void
 }
 
-export function FileExplorer({ selectedFile, onSelectFile }: FileExplorerProps) {
+export function FileExplorer({ searchQuery, selectedFile, onSelectFile }: FileExplorerProps) {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
-  const visibleNodes = useMemo(() => getVisibleNodes(treeData, expandedIds), [expandedIds])
+  const isSearching = searchQuery.trim().length > 0
+
+  // While searching, render a pruned tree with matching-branch folders forced open.
+  const { nodes: displayTree, expandIds: searchExpandIds } = useMemo(
+    () => (isSearching ? filterTree(treeData, searchQuery) : { nodes: treeData, expandIds: new Set<string>() }),
+    [searchQuery, isSearching],
+  )
+
+  const effectiveExpandedIds = isSearching ? searchExpandIds : expandedIds
+  const visibleNodes = useMemo(() => getVisibleNodes(displayTree, effectiveExpandedIds), [displayTree, effectiveExpandedIds])
 
   const toggleExpanded = (id: string) => {
     setExpandedIds((prev) => {
@@ -31,7 +41,7 @@ export function FileExplorer({ selectedFile, onSelectFile }: FileExplorerProps) 
 
   const { focusedId, registerRef, handleKeyDown, setFocusedId } = useTreeNavigation({
     visibleNodes,
-    expandedIds,
+    expandedIds: effectiveExpandedIds,
     onToggle: toggleExpanded,
     onSelectFile,
     parentMap,
@@ -47,26 +57,30 @@ export function FileExplorer({ selectedFile, onSelectFile }: FileExplorerProps) 
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-text">Files</h2>
         <span className="rounded-sm bg-surface-hover px-2 py-0.5 text-xs text-text-muted">
-          {countFiles(treeData)} items
+          {countFiles(displayTree)} {isSearching ? 'matches' : 'items'}
         </span>
       </div>
 
-      <div role="tree" aria-label="Vault files" onKeyDown={handleKeyDown} className="flex flex-col">
-        {treeData.map((node) => (
-          <TreeNode
-            key={node.id}
-            node={node}
-            depth={0}
-            expandedIds={expandedIds}
-            selectedId={selectedFile?.id ?? null}
-            focusedId={focusedId}
-            onToggle={toggleExpanded}
-            onSelectFile={onSelectFile}
-            onFocusNode={setFocusedId}
-            registerRef={registerRef}
-          />
-        ))}
-      </div>
+      {isSearching && displayTree.length === 0 ? (
+        <p className="mt-4 text-center text-sm text-text-dim">No files match "{searchQuery}"</p>
+      ) : (
+        <div role="tree" aria-label="Vault files" onKeyDown={handleKeyDown} className="flex flex-col">
+          {displayTree.map((node) => (
+            <TreeNode
+              key={node.id}
+              node={node}
+              depth={0}
+              expandedIds={effectiveExpandedIds}
+              selectedId={selectedFile?.id ?? null}
+              focusedId={focusedId}
+              onToggle={toggleExpanded}
+              onSelectFile={onSelectFile}
+              onFocusNode={setFocusedId}
+              registerRef={registerRef}
+            />
+          ))}
+        </div>
+      )}
     </section>
   )
 }
