@@ -2,52 +2,66 @@ import { LuSearch, LuShield, LuUpload } from 'react-icons/lu'
 
 export function Header() {
   return (
-    <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-surface px-3 sm:gap-4 sm:px-4">
-      <div className="flex shrink-0 items-center gap-2 text-sm font-semibold">
-        <span
-          className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-accent text-accent"
-          aria-hidden="true"
-        >
-          <LuShield size={12} />
+    <header className="relative flex h-14 shrink-0 items-center border-b border-border bg-surface px-4">
+      {/* Logo */}
+      <div className="flex shrink-0 items-center gap-2.5">
+        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/20 text-accent">
+          <LuShield size={16} strokeWidth={2.5} aria-hidden="true" />
         </span>
-        <span className="hidden md:inline">SecureVault</span>
-        <span className="md:hidden">SV</span>
+        <div className="flex flex-col gap-0.5 leading-none">
+          <span className="text-sm font-semibold text-text">SecureVault</span>
+          <span className="font-mono text-[10px] tracking-wide text-text-dim">
+            ENTERPRISE CLOUD EXPLORER
+          </span>
+        </div>
       </div>
 
-      {/* Full search input from tablet up */}
-      <div className="hidden max-w-md flex-1 md:block">
+      {/* Search bar */}
+      <div className="absolute left-1/2 hidden w-full max-w-sm -translate-x-1/2 items-center gap-2 rounded-md border border-border bg-bg px-3 py-1.5 transition-colors focus-within:border-accent/60 md:flex">
+        <LuSearch
+          size={14}
+          className="shrink-0 text-text-dim"
+          aria-hidden="true"
+        />
+
         <input
           type="search"
-          placeholder="Search files and folders…"
-          className="w-full rounded-md border border-border bg-bg px-3 py-1.5 text-sm text-text placeholder:text-text-dim focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+          placeholder="Search files and folders..."
+          className="w-full bg-transparent text-sm text-text placeholder:text-text-dim focus-visible:outline-none"
         />
       </div>
 
-      {/* Phone-only search trigger */}
-      <button
-        type="button"
-        aria-label="Search"
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-text-muted hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent md:hidden"
-      >
-        <LuSearch size={18} aria-hidden="true" />
-      </button>
+      {/* Right-side actions */}
+      <div className="ml-auto flex shrink-0 items-center gap-2">
+        {/* Mobile: standalone icon-only search trigger */}
+        <button
+          type="button"
+          aria-label="Search"
+          className="flex h-9 w-9 items-center justify-center rounded-md text-text-muted hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent md:hidden"
+        >
+          <LuSearch size={18} aria-hidden="true" />
+        </button>
 
-      <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
-        {/* Icon-only upload below desktop */}
+        {/* Mobile: standalone icon-only upload trigger */}
         <button
           type="button"
           aria-label="Upload file"
-          className="flex h-11 w-11 items-center justify-center rounded-md bg-accent text-bg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg lg:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-md text-text-muted hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent md:hidden"
         >
           <LuUpload size={18} aria-hidden="true" />
         </button>
-        {/* Full label from desktop up */}
+
+        {/* Desktop */}
         <button
           type="button"
-          className="hidden rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-bg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg lg:block"
+          aria-label="Upload file"
+          className="hidden h-9 items-center gap-2 px-3 text-sm font-medium justify-center rounded-md bg-accent text-bg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg md:flex cursor-pointer"
         >
-          Upload File
+          <LuUpload size={14} strokeWidth={2.5} aria-hidden="true" />
+          <span>Upload file</span>
         </button>
+
+        {/* Avatar */}
         <div
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-hover text-xs font-medium text-text"
           aria-label="Jane Doe"
@@ -57,4 +71,4 @@ export function Header() {
       </div>
     </header>
   )
-}
+}
