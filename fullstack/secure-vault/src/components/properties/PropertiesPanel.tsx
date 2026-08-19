@@ -1,12 +1,16 @@
 import { LuFile, LuFileText } from 'react-icons/lu'
 import type { FileNode } from '../../types/tree'
+import type { ActivityEntry } from '../../hooks/useRecentActivity'
 import { getFileType } from '../../utils/file'
+import { RecentActivity } from './RecentActivity'
 
 interface PropertiesPanelProps {
   selectedFile: FileNode | null
+  recentActivity: ActivityEntry[]
+  onSelectRecent: (file: FileNode) => void
 }
 
-export function PropertiesPanel({ selectedFile }: PropertiesPanelProps) {
+export function PropertiesPanel({ selectedFile, recentActivity, onSelectRecent }: PropertiesPanelProps) {
   return (
     <section
       aria-label="File properties"
@@ -14,6 +18,12 @@ export function PropertiesPanel({ selectedFile }: PropertiesPanelProps) {
     >
       <h2 className="mb-4 text-sm font-semibold text-text">Properties</h2>
       {selectedFile ? <PropertiesDetail file={selectedFile} /> : <EmptyState />}
+
+      <RecentActivity
+        entries={recentActivity}
+        activeId={selectedFile?.id ?? null}
+        onSelect={(entry) => onSelectRecent({id: entry.id, name: entry.name, type: 'file', size: entry.size})}
+      />
     </section>
   )
 }
