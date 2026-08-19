@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import data from '../../data/data.json'
 import type { TreeNode as TreeNodeType, FileNode } from '../../types/tree'
 import { TreeNode } from './TreeNode'
+import { buildParentMap, getVisibleNodes } from '../../utils/tree'
+import { useTreeNavigation } from '../../hooks/useTreeNavigation'
 
 const treeData = data as TreeNodeType[]
+const parentMap = buildParentMap(treeData) // static data → build once, module scope
 
 function countFiles(nodes: TreeNodeType[]): number {
   return nodes.reduce((sum, node) => sum + (node.type === 'file' ? 1 : countFiles(node.children)), 0)
@@ -16,6 +19,7 @@ interface FileExplorerProps {
 
 export function FileExplorer({ selectedFile, onSelectFile }: FileExplorerProps) {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+  const visibleNodes = useMemo(() => getVisibleNodes(treeData, expandedIds), [expandedIds])
 
   const toggleExpanded = (id: string) => {
     setExpandedIds((prev) => {
@@ -24,6 +28,14 @@ export function FileExplorer({ selectedFile, onSelectFile }: FileExplorerProps) 
       return next
     })
   }
+
+  const { focusedId, registerRef, handleKeyDown, setFocusedId } = useTreeNavigation({
+    visibleNodes,
+    expandedIds,
+    onToggle: toggleExpanded,
+    onSelectFile,
+    parentMap,
+  })
 
   return (
     <section
@@ -37,7 +49,7 @@ export function FileExplorer({ selectedFile, onSelectFile }: FileExplorerProps) 
         </span>
       </div>
 
-      <div className="flex flex-col">
+      <div role="tree" aria-label="Vault files" onKeyDown={handleKeyDown} className="flex flex-col">
         {treeData.map((node) => (
           <TreeNode
             key={node.id}
@@ -45,8 +57,11 @@ export function FileExplorer({ selectedFile, onSelectFile }: FileExplorerProps) 
             depth={0}
             expandedIds={expandedIds}
             selectedId={selectedFile?.id ?? null}
+            focusedId={focusedId}
             onToggle={toggleExpanded}
             onSelectFile={onSelectFile}
+            onFocusNode={setFocusedId}
+            registerRef={registerRef}
           />
         ))}
       </div>

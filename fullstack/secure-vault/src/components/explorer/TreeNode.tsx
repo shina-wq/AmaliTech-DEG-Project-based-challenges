@@ -5,13 +5,26 @@ interface TreeNodeProps {
   depth: number
   expandedIds: Set<string>
   selectedId: string | null
+  focusedId: string | null
   onToggle: (id: string) => void
   onSelectFile: (file: FileNode) => void
+  onFocusNode: (id: string) => void
+  registerRef: (id: string, el: HTMLButtonElement | null) => void
 }
 
 const INDENT_PX = 16
 
-export function TreeNode({ node, depth, expandedIds, selectedId, onToggle, onSelectFile }: TreeNodeProps) {
+export function TreeNode({
+  node,
+  depth,
+  expandedIds,
+  selectedId,
+  focusedId,
+  onToggle,
+  onSelectFile,
+  onFocusNode,
+  registerRef,
+}: TreeNodeProps) {
   const isFolder = node.type === 'folder'
   const isExpanded = isFolder && expandedIds.has(node.id)
   const isSelected = !isFolder && node.id === selectedId
@@ -19,11 +32,17 @@ export function TreeNode({ node, depth, expandedIds, selectedId, onToggle, onSel
   const handleClick = () => (isFolder ? onToggle(node.id) : onSelectFile(node))
 
   return (
-    <div>
+    <div role="none">
       <button
         type="button"
-        onClick={handleClick}
+        role="treeitem"
         aria-selected={isSelected}
+        aria-expanded={isFolder ? isExpanded : undefined}
+        aria-level={depth + 1}
+        tabIndex={node.id === focusedId ? 0 : -1}
+        ref={(el) => registerRef(node.id, el)}
+        onFocus={() => onFocusNode(node.id)}
+        onClick={handleClick}
         style={{ paddingLeft: depth * INDENT_PX + 8 }}
         className={`flex w-full items-center gap-2 rounded-md border-l-2 py-1.5 pr-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-inset ${
           isSelected
@@ -46,15 +65,15 @@ export function TreeNode({ node, depth, expandedIds, selectedId, onToggle, onSel
               depth={depth + 1}
               expandedIds={expandedIds}
               selectedId={selectedId}
+              focusedId={focusedId}
               onToggle={onToggle}
               onSelectFile={onSelectFile}
+              onFocusNode={onFocusNode}
+              registerRef={registerRef}
             />
           ))
         ) : (
-          <p
-            style={{ paddingLeft: (depth + 1) * INDENT_PX + 8 }}
-            className="py-1 text-xs italic text-text-dim"
-          >
+          <p style={{ paddingLeft: (depth + 1) * INDENT_PX + 8 }} className="py-1 text-xs italic text-text-dim">
             Empty folder
           </p>
         ))}
