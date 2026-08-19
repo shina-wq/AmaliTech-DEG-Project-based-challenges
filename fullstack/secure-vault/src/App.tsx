@@ -29,7 +29,8 @@ function App() {
       </main>
       <PropertiesDrawer
         selectedFile={selectedFile}
-        
+        recentActivity={recentActivity}
+        onSelectRecent={handleSelectFile}
       />
     </div>
   )

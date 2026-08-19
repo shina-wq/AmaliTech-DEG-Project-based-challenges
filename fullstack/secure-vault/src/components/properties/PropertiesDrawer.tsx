@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react'
 import type { FileNode } from '../../types/tree'
+import type { ActivityEntry } from '../../hooks/useRecentActivity'
 import { PropertiesDetail } from './PropertiesPanel'
+import { RecentActivity } from './RecentActivity'
 
 interface PropertiesDrawerProps {
   selectedFile: FileNode | null
+  recentActivity: ActivityEntry[]
+  onSelectRecent: (file: FileNode) => void
 }
 
-export function PropertiesDrawer({ selectedFile }: PropertiesDrawerProps) {
+export function PropertiesDrawer({ selectedFile, recentActivity, onSelectRecent }: PropertiesDrawerProps) {
   const [expanded, setExpanded] = useState(false)
 
   // Reset to the collapsed "peek" state whenever the selection changes.
@@ -14,7 +18,12 @@ export function PropertiesDrawer({ selectedFile }: PropertiesDrawerProps) {
     setExpanded(false)
   }, [selectedFile?.id])
 
-  if (!selectedFile) return null
+  // Nothing to show if there's no selection AND no history to browse.
+  if (!selectedFile && recentActivity.length === 0) return null
+
+  const handleSelectRecent = (entry: ActivityEntry) => {
+    onSelectRecent({ id: entry.id, name: entry.name, type: 'file', size: entry.size })
+  }
 
   return (
     <div
@@ -31,12 +40,13 @@ export function PropertiesDrawer({ selectedFile }: PropertiesDrawerProps) {
         <span className="h-1 w-9 rounded-full bg-border" aria-hidden="true" />
         <span className="flex w-full items-center justify-between text-sm">
           <span className="font-semibold text-text">Properties</span>
-          <span className="truncate pl-4 text-text-dim">{selectedFile.name}</span>
+          <span className="truncate pl-4 text-text-dim">{selectedFile?.name ?? 'No file selected'}</span>
         </span>
       </button>
 
       <div className="flex-1 overflow-y-auto px-4 pb-4">
-        <PropertiesDetail file={selectedFile} />
+        {selectedFile && <PropertiesDetail file={selectedFile} />}
+        <RecentActivity entries={recentActivity} activeId={selectedFile?.id ?? null} onSelect={handleSelectRecent} />
       </div>
     </div>
   )
