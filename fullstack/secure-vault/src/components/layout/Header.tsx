@@ -1,3 +1,5 @@
+import { LuSearch, LuShield, LuUpload } from 'react-icons/lu'
+
 export function Header() {
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-surface px-3 sm:gap-4 sm:px-4">
@@ -6,9 +8,7 @@ export function Header() {
           className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-accent text-accent"
           aria-hidden="true"
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2 3 6v6c0 5.25 3.75 9.75 9 11 5.25-1.25 9-5.75 9-11V6z" />
-          </svg>
+          <LuShield size={12} />
         </span>
         <span className="hidden md:inline">SecureVault</span>
         <span className="md:hidden">SV</span>
@@ -29,7 +29,7 @@ export function Header() {
         aria-label="Search"
         className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-text-muted hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent md:hidden"
       >
-        <SearchIcon />
+        <LuSearch size={18} aria-hidden="true" />
       </button>
 
       <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
@@ -39,7 +39,7 @@ export function Header() {
           aria-label="Upload file"
           className="flex h-11 w-11 items-center justify-center rounded-md bg-accent text-bg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg lg:hidden"
         >
-          <UploadIcon />
+          <LuUpload size={18} aria-hidden="true" />
         </button>
         {/* Full label from desktop up */}
         <button
@@ -57,22 +57,4 @@ export function Header() {
       </div>
     </header>
   )
-}
-
-function SearchIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" strokeLinecap="round" />
-      <path d="m21 21-4.3-4.3" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function UploadIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
-      <path d="M12 16V4m0 0 4 4m-4-4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
+}

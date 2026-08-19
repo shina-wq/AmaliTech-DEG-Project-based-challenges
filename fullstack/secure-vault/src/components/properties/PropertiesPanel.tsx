@@ -1,3 +1,4 @@
+import { LuFile } from 'react-icons/lu'
 import type { FileNode } from '../../types/tree'
 import { getFileType } from '../../utils/file'
 
@@ -32,7 +33,7 @@ export function PropertiesDetail({ file }: { file: FileNode }) {
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-muted text-accent"
           aria-hidden="true"
         >
-          <FileIcon />
+          <LuFile size={20} strokeWidth={1.5} />
         </div>
         <p className="truncate text-sm font-medium text-text" title={file.name}>
           {file.name}
@@ -58,21 +59,12 @@ function EmptyState() {
         className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-border text-text-dim"
         aria-hidden="true"
       >
-        <FileIcon />
+        <LuFile size={20} strokeWidth={1.5} />
       </div>
       <p className="text-sm font-medium text-text">No file selected</p>
       <p className="mt-1 max-w-56 text-xs leading-relaxed text-text-dim">
         Select a file from the explorer pane to view encrypted metadata, audits, and properties.
       </p>
     </div>
-  )
-}
-
-function FileIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M6 2h9l5 5v15H6z" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M15 2v5h5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   )
 }

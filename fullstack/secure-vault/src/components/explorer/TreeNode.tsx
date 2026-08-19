@@ -1,3 +1,4 @@
+import { LuChevronRight, LuFile, LuFolder } from 'react-icons/lu'
 import type { TreeNode as TreeNodeType, FileNode } from '../../types/tree'
 
 interface TreeNodeProps {
@@ -57,12 +58,20 @@ export function TreeNode({
         }`}
       >
         {isFolder ? (
-          <ChevronIcon expanded={isExpanded} />
+          <LuChevronRight
+            size={14}
+            className={`shrink-0 text-text-dim transition-transform duration-150 ${isExpanded ? 'rotate-90' : ''}`}
+            aria-hidden="true"
+          />
         ) : (
           <span className="w-3.5 shrink-0" aria-hidden="true" />
         )}
 
-        {isFolder ? <FolderIcon /> : <FileIcon />}
+        {isFolder ? (
+          <LuFolder size={16} className="shrink-0 text-text-muted" aria-hidden="true" />
+        ) : (
+          <LuFile size={16} className="shrink-0 text-text-muted" aria-hidden="true" />
+        )}
 
         <span className="truncate">{node.name}</span>
       </button>
@@ -95,75 +104,5 @@ export function TreeNode({
         </div>
       )}
     </div>
-  )
-}
-
-function ChevronIcon({ expanded }: { expanded: boolean }) {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className={`shrink-0 text-text-dim transition-transform duration-150 ${
-        expanded ? 'rotate-90' : ''
-      }`}
-      aria-hidden="true"
-    >
-      <path
-        d="m9 6 6 6-6 6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function FolderIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className="shrink-0 text-text-muted"
-      aria-hidden="true"
-    >
-      <path
-        d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function FileIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className="shrink-0 text-text-muted"
-      aria-hidden="true"
-    >
-      <path
-        d="M6 2h9l5 5v15H6z"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M15 2v5h5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   )
 }
