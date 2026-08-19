@@ -29,7 +29,13 @@ export function TreeNode({
   const isExpanded = isFolder && expandedIds.has(node.id)
   const isSelected = !isFolder && node.id === selectedId
 
-  const handleClick = () => (isFolder ? onToggle(node.id) : onSelectFile(node))
+  const handleClick = () => {
+    if (isFolder) {
+      onToggle(node.id)
+    } else {
+      onSelectFile(node)
+    }
+  }
 
   return (
     <div role="none">
@@ -50,33 +56,44 @@ export function TreeNode({
             : 'border-transparent text-text hover:bg-surface-hover'
         }`}
       >
-        {isFolder ? <ChevronIcon expanded={isExpanded} /> : <span className="w-3.5 shrink-0" aria-hidden="true" />}
+        {isFolder ? (
+          <ChevronIcon expanded={isExpanded} />
+        ) : (
+          <span className="w-3.5 shrink-0" aria-hidden="true" />
+        )}
+
         {isFolder ? <FolderIcon /> : <FileIcon />}
+
         <span className="truncate">{node.name}</span>
       </button>
 
-      {isFolder &&
-        isExpanded &&
-        (node.children.length > 0 ? (
-          node.children.map((child) => (
-            <TreeNode
-              key={child.id}
-              node={child}
-              depth={depth + 1}
-              expandedIds={expandedIds}
-              selectedId={selectedId}
-              focusedId={focusedId}
-              onToggle={onToggle}
-              onSelectFile={onSelectFile}
-              onFocusNode={onFocusNode}
-              registerRef={registerRef}
-            />
-          ))
-        ) : (
-          <p style={{ paddingLeft: (depth + 1) * INDENT_PX + 8 }} className="py-1 text-xs italic text-text-dim">
-            Empty folder
-          </p>
-        ))}
+      {isFolder && isExpanded && (
+        <div role="group">
+          {node.children.length > 0 ? (
+            node.children.map((child) => (
+              <TreeNode
+                key={child.id}
+                node={child}
+                depth={depth + 1}
+                expandedIds={expandedIds}
+                selectedId={selectedId}
+                focusedId={focusedId}
+                onToggle={onToggle}
+                onSelectFile={onSelectFile}
+                onFocusNode={onFocusNode}
+                registerRef={registerRef}
+              />
+            ))
+          ) : (
+            <p
+              style={{ paddingLeft: (depth + 1) * INDENT_PX + 8 }}
+              className="py-1 text-xs italic text-text-muted"
+            >
+              Empty folder
+            </p>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -90,27 +107,63 @@ function ChevronIcon({ expanded }: { expanded: boolean }) {
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      className={`shrink-0 text-text-dim transition-transform duration-150 ${expanded ? 'rotate-90' : ''}`}
+      className={`shrink-0 text-text-dim transition-transform duration-150 ${
+        expanded ? 'rotate-90' : ''
+      }`}
       aria-hidden="true"
     >
-      <path d="m9 6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="m9 6 6 6-6 6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
 
 function FolderIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 text-text-muted" aria-hidden="true">
-      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className="shrink-0 text-text-muted"
+      aria-hidden="true"
+    >
+      <path
+        d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
 
 function FileIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 text-text-muted" aria-hidden="true">
-      <path d="M6 2h9l5 5v15H6z" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M15 2v5h5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className="shrink-0 text-text-muted"
+      aria-hidden="true"
+    >
+      <path
+        d="M6 2h9l5 5v15H6z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15 2v5h5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }

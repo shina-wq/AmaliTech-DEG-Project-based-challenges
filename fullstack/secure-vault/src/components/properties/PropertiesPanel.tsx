@@ -38,7 +38,7 @@ function PropertiesDetail({ file }: { file: FileNode }) {
       <dl className="flex flex-col gap-2.5">
         {rows.map(([label, value]) => (
           <div key={label} className="flex justify-between gap-4 text-sm">
-            <dt className="text-text-dim">{label}</dt>
+            <dt className="text-text-muted">{label}</dt>
             <dd className="truncate text-text">{value}</dd>
           </div>
         ))}
@@ -57,7 +57,7 @@ function EmptyState() {
         <FileIcon />
       </div>
       <p className="text-sm font-medium text-text">No file selected</p>
-      <p className="mt-1 max-w-56 text-xs leading-relaxed text-text-dim">
+      <p className="mt-1 max-w-56 text-xs leading-relaxed text-text-muted">
         Select a file from the explorer pane to view encrypted metadata, audits, and properties.
       </p>
     </div>

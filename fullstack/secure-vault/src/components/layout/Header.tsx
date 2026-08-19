@@ -16,6 +16,7 @@ export function Header() {
       <div className="max-w-md flex-1">
         <input
           type="search"
+          aria-label="Search files and folders"
           placeholder="Search files and folders…"
           className="w-full rounded-md border border-border bg-bg px-3 py-1.5 text-sm text-text placeholder:text-text-dim focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
         />
