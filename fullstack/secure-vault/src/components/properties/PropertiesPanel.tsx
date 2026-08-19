@@ -7,14 +7,18 @@ interface PropertiesPanelProps {
 
 export function PropertiesPanel({ selectedFile }: PropertiesPanelProps) {
   return (
-    <section aria-label="File properties" className="flex flex-1 flex-col overflow-y-auto p-4 md:p-6">
+    <section
+      aria-label="File properties"
+      className="hidden flex-1 flex-col overflow-y-auto p-4 md:flex md:p-6"
+    >
       <h2 className="mb-4 text-sm font-semibold text-text">Properties</h2>
       {selectedFile ? <PropertiesDetail file={selectedFile} /> : <EmptyState />}
     </section>
   )
 }
 
-function PropertiesDetail({ file }: { file: FileNode }) {
+// Exported so the mobile bottom sheet (PropertiesDrawer) can reuse the same detail view.
+export function PropertiesDetail({ file }: { file: FileNode }) {
   const rows: [string, string][] = [
     ['Type', `${getFileType(file.name)} Document`],
     ['Size', file.size],
@@ -38,7 +42,7 @@ function PropertiesDetail({ file }: { file: FileNode }) {
       <dl className="flex flex-col gap-2.5">
         {rows.map(([label, value]) => (
           <div key={label} className="flex justify-between gap-4 text-sm">
-            <dt className="text-text-muted">{label}</dt>
+            <dt className="text-text-dim">{label}</dt>
             <dd className="truncate text-text">{value}</dd>
           </div>
         ))}
@@ -57,7 +61,7 @@ function EmptyState() {
         <FileIcon />
       </div>
       <p className="text-sm font-medium text-text">No file selected</p>
-      <p className="mt-1 max-w-56 text-xs leading-relaxed text-text-muted">
+      <p className="mt-1 max-w-56 text-xs leading-relaxed text-text-dim">
         Select a file from the explorer pane to view encrypted metadata, audits, and properties.
       </p>
     </div>

@@ -50,7 +50,7 @@ export function TreeNode({
         onFocus={() => onFocusNode(node.id)}
         onClick={handleClick}
         style={{ paddingLeft: depth * INDENT_PX + 8 }}
-        className={`flex w-full items-center gap-2 rounded-md border-l-2 py-1.5 pr-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-inset ${
+        className={`flex w-full items-center gap-2 rounded-md border-l-2 py-3 pr-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-inset lg:py-1.5 ${
           isSelected
             ? 'border-accent bg-accent-muted text-accent'
             : 'border-transparent text-text hover:bg-surface-hover'

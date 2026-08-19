@@ -40,7 +40,9 @@ export function FileExplorer({ selectedFile, onSelectFile }: FileExplorerProps) 
   return (
     <section
       aria-label="File explorer"
-      className="flex w-full flex-col overflow-y-auto border-b border-border p-4 md:w-96 md:shrink-0 md:border-b-0 md:border-r"
+      className={`flex w-full flex-col overflow-y-auto border-b border-border p-4 md:w-72 md:border-b-0 md:border-r md:shrink-0 lg:w-96 ${
+        selectedFile ? 'pb-20 md:pb-4' : ''
+      }`}
     >
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-text">Files</h2>
