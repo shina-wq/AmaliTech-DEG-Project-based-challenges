@@ -23,6 +23,7 @@ export function TreeNode({ node, depth, expandedIds, selectedId, onToggle, onSel
       <button
         type="button"
         onClick={handleClick}
+        aria-selected={isSelected}
         style={{ paddingLeft: depth * INDENT_PX + 8 }}
         className={`flex w-full items-center gap-2 rounded-md border-l-2 py-1.5 pr-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-inset ${
           isSelected
