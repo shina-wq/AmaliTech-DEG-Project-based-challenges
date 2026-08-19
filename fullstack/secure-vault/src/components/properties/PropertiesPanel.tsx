@@ -1,4 +1,4 @@
-import { LuFile } from 'react-icons/lu'
+import { LuFile, LuFileText } from 'react-icons/lu'
 import type { FileNode } from '../../types/tree'
 import { getFileType } from '../../utils/file'
 
@@ -30,10 +30,10 @@ export function PropertiesDetail({ file }: { file: FileNode }) {
     <div>
       <div className="mb-4 flex items-center gap-3 border-b border-border pb-4">
         <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-muted text-accent"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-accent"
           aria-hidden="true"
         >
-          <LuFile size={20} strokeWidth={1.5} />
+          <LuFileText size={20} strokeWidth={2} />
         </div>
         <p className="truncate text-sm font-medium text-text" title={file.name}>
           {file.name}

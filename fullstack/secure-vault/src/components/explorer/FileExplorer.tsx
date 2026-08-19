@@ -46,7 +46,7 @@ export function FileExplorer({ selectedFile, onSelectFile }: FileExplorerProps) 
     >
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-text">Files</h2>
-        <span className="rounded-full bg-surface-hover px-2 py-0.5 text-xs text-text-muted">
+        <span className="rounded-sm bg-surface-hover px-2 py-0.5 text-xs text-text-muted">
           {countFiles(treeData)} items
         </span>
       </div>
