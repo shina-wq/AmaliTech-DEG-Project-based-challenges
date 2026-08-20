@@ -1,123 +1,117 @@
-# SecureVault-Dashboard
+# SecureVault Dashboard
 
-This challenge is designed to test your ability to bridge Computer Science fundamentals with Modern Frontend Engineering.
+A file explorer UI for a fictional enterprise cloud storage company. Built for the AmaliTech DEG project-based challenge.
 
-## 1. Business Scenario & Context
+**Live demo:** https://amali-tech-deg-project-based-challe-gilt.vercel.app/
+**Design file:** https://www.figma.com/design/UFsmlJumEwecmOt68yIX8M/SecureVault-Dashboard
 
-**Client:** SecureVault Inc.
-**Industry:** Enterprise Cloud Security
+## 1. Features
 
-**The Problem:** SecureVault offers high-security cloud storage for law firms and banks. Their backend engineers have built a robust API that returns folder structures efficiently. However, their current frontend is a simple list that is hard to navigate. Clients are complaining that they can't manage nested files easily.
+- Recursive folder tree, expand/collapse, any depth
+- Click a file to see its details (name, type, size) in a properties panel
+- Full keyboard navigation (arrow keys, Enter, Home/End)
+- Search with wildcards (`*.pdf`, `Case_*`): matching files auto-expand their parent folders
+- Recent Activity: remembers the last 5 files you opened
+- Responsive: side panel on desktop, bottom drawer on mobile
 
-**Your Role:** You are the incoming Junior Frontend Engineer. Your task is to design and build a modern, high-performance "File Explorer" UI that impresses the CTO and the Design Lead.
+## 2. Tech Stack
 
----
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS v4
+- Vitest + React Testing Library
 
-## 2. The Assignment Stages
+## 3. Setup
 
-This is a **hybrid design/engineering challenge**. You are expected to demonstrate competence in both visual design logic and algorithmic frontend implementation.
+Requires Node 20.19+ or 22.12+ (tested on v24).
 
-### Phase 1: The Design System
+```bash
+git clone https://github.com/shina-wq/AmaliTech-DEG-Project-based-challenges.git
+cd AmaliTech-DEG-Project-based-challenges/fullstack/secure-vault
+npm install
+npm run dev
+```
 
-**Before writing code, you must design the interface.**
+Other commands:
 
-- **Deliverable:** A link to a design file (Figma, Penpot, or Sketch) or a PDF export of your design frames.
-- **Requirement:** Your design file must include a dedicated **"Design System" page** that defines:
-  - **Typography Scale**
-  - **Color Palette**
-  - **Spacing Grid**
-  - **Component States**
-- **Brand Guidelines:** SecureVault wants a "Dark Mode" aesthetic that feels "cyber-secure, precise, and fast."
+```bash
+npm run test     # run tests
+npm run build    # type-check + production build
+npm run lint      # eslint
+```
 
-### Phase 2: The Implementation
+## 4. Architecture
+```
+src/
+├── components/
+│   ├── explorer/    # tree view (FileExplorer, TreeNode)
+│   ├── properties/  # side panel + mobile drawer
+│   ├── layout/      # header
+│   └── ui/          # small reusable pieces (Button, Badge, SearchInput...)
+├── hooks/           # useTreeNavigation, useRecentActivity, useNow
+├── utils/           # tree.ts, search.ts, file.ts, time.ts (plain functions)
+└── types/           # TreeNode / FileNode / FolderNode
+```
 
-**Build the application using the design system you created in Phase 1.**
+## 5. Recursive Strategy
 
-- **Constraint:** You **cannot** use component libraries like Bootstrap, Material UI, Chakra UI, or Ant Design. You must build your components from scratch to prove you understand CSS layout and component abstraction.
-- **Note:** CSS frameworks like Tailwind are allowed _only_ if you use them to build your own reusable component architecture.
+The data is a tree (`FolderNode` can hold more `TreeNode`s, `FileNode` is always a leaf - see `types/tree.ts`). Two problems come from this shape, and I solved both outside the component tree:
 
----
+1. **What's currently visible?** `getVisibleNodes()` in `utils/tree.ts` walks the tree and returns a flat array of only the nodes that should show right now, based on which folders are expanded. This flat list is also what keyboard navigation uses for "next/previous item". There's no need to know about tree structure at all once you have this array.
+2. **Rendering.** `TreeNode.tsx` renders itself, then loops its own children and renders a `TreeNode` for each, recursion, not a manual depth loop. This is why it doesn't care if a folder is nested 2 levels or 20 (see `tree.deep.test.ts`, which checks 20 levels of nesting).
 
-## 3. User Stories & Acceptance Criteria
+Keeping the "which nodes are visible" logic in a plain function, separate from the component that renders them, is what makes both the keyboard nav and the recursion simple.
 
-### Core Features (Required)
+## 6. Keyboard Navigation
 
-#### Story 1: The Recursive Tree
+Follows the W3C tree view pattern (`useTreeNavigation.ts`):
 
-> "As a lawyer with 10 years of case files, I need to navigate deeply nested folders without reloading the page."
+| Key | Action |
+|---|---|
+| `↓` / `↑` | Move focus to next/previous visible item |
+| `→` | Expand a folder (focus stays), or move into first child if already open |
+| `←` | Collapse a folder (focus stays), or move to parent if already closed |
+| `Enter` | Open the focused file |
+| `Home` / `End` | Jump to first / last visible item |
 
-- **AC 1:** The UI renders the folder structure from the provided JSON.
-- **AC 2:** The component structure must be **recursive**. It should handle 2 levels of depth or 20 levels without breaking the UI.
-- **AC 3:** Folders must expand/collapse on click.
+Only one item has `tabIndex={0}` at a time (roving tabindex), so pressing Tab once puts you in the tree, and arrow keys take over from there. This is the same pattern used in real component libraries.
 
-#### Story 2: File Details & Inspection
+## 7. Wildcard Feature: Recent Activity
 
-> "As a user, I need to see file metadata to ensure I'm opening the right version."
+The brief asked for one extra feature not in the requirements. I chose **Recent Activity**: the last 5 files you opened, shown at the bottom of the properties panel, click one to jump straight back to it.
 
-- **AC 1:** Clicking a file "selects" it (distinct visual state based on your design).
-- **AC 2:** A "Properties Panel" displays the selected file's Name, Type, and Size.
+**Why this one**: In a real file vault, the most common thing a user does is not browse once. It's come back to the same handful of files over and over (a case file, a spreadsheet they're mid-edit on, and so on). Recent Activity turns that from "find it in the tree again" into "click it in the list." It's a small change that saves the most repeated action in the app and therefore saves time and improves user experience.
 
-#### Story 3: Keyboard Accessibility
+**Honest limitation:** This is stored in `localStorage` (see `useRecentActivity.ts`), not on a server. That means it doesn't follow you across devices or browsers, and clearing site data wipes it. For a real product handling legal/financial files, this would need to be a real API endpoint tied to the user's account. `localStorage` is the right call for this challenge project but not a production-ready project.
 
-> "As a power user, I hate reaching for my mouse. I want to navigate the vault using only my keyboard."
+## 8. Accessibility
 
-- **AC 1:** `Up/Down` arrows move focus between the visible items in the explorer.
-- **AC 2:** `Right` arrow expands a folder; `Left` arrow collapses it.
-- **AC 3:** `Enter` selects the file.
+- Tree follows the [W3C treeview pattern](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/): `role="tree"`, `role="treeitem"`, `aria-expanded`, `aria-selected`, `aria-level`
+- Roving tabindex: one Tab stop for the whole tree, arrow keys move focus inside it
+- All interactive elements are real `<button>`s, so they work with screen readers and keyboards out of the box, no extra ARIA needed
+- Focus is visible (`focus-visible` rings) everywhere
+- Empty folders and empty search results announce as text, not just blank space
 
-### The "Wildcard" Feature (Required)
+## 9. Testing
 
-#### Story 4: The Innovation Clause
+```bash
+npm run test
+```
 
-> "As a developer, I want to add one feature that the client didn't ask for, but would significantly improve the user experience."
+Covers:
+- Keyboard navigation (all arrow/Enter/Home/End cases)
+- Tree flattening and parent-mapping logic
+- Deep nesting (20 levels) doesn't break anything
+- TreeNode rendering (expand/collapse, empty folder state)
+- Full app flow (select a file, see it in the properties panel)
 
-- **Task:** Identify a gap in the requirements. What is missing?
-- **AC 1:** Implement **one** additional feature of your choice.
-- **AC 2:** In your README, explain _why_ you chose this feature and how it adds value to the business.
+## 10. Future Improvements
 
-### Bonus Feature (Optional)
+Things I'd do next if this became a real product:
 
-#### Story 5: Search & Filter
-
-- **AC 1:** A search bar filters the view. Matching items deep inside folders should force those folders to expand automatically.
-
----
-
-## 4. Technical Requirements
-
-- **Data:** Use the `data.json` file provided in this repo. Do not edit the JSON structure, but you may add more items to test performance.
-- **Tech Stack:** React, Vue, Svelte, or Vanilla JS.
-- **Documentation:** Your README in the submission must include:
-  1.  Setup instructions.
-  2.  Link to your Design File.
-  3.  Explanation of your **Recursive Strategy** (how you managed the data structure).
-  4.  Explanation of your **Wildcard Feature**.
-
----
-
-## 5. Submission Instructions
-
-1.  **Fork** this repository.
-2.  Complete the code in your fork.
-3.  **Update the README:**
-    - **Delete** all the instructions in this file (the text you are reading now).
-    - **Replace** them with your own documentation as outlined in Section 4.
-    - _Note: Do not append your docs to the end. The final README should look like a professional project documentation, not a homework assignment._
-4.  Submit your repo link via the [online](https://forms.cloud.microsoft/e/PrfSgKKQ0k) form.
-
----
-
-### ⚠️ CRITICAL: Pre-Submission Checklist
-
-**STOP and review your work.** To be eligible for the Solution Defense interview, your submission **MUST** pass the following "Gatekeeper" checks.
-
-If any of the following are incorrect, your submission will be flagged as incomplete and you will **NOT** be invited for an interview.
-
-1.  **Public Repository:** Is your GitHub repository set to **Public**? (Private links will be auto-rejected).
-2.  **Audit-Ready History:** Does your Git commit history show your progress over time? (Repositories with a single "Initial Commit" or "Upload files" containing the entire project will be **rejected as unverifiable**).
-3.  **Working Deployment:** Have you tested your live link in an **Incognito/Private** window to ensure it loads without errors?
-4.  **No Restricted Libraries:** Did you build your own components? (Submissions using **Bootstrap, Material UI, or Chakra UI** will be disqualified).
-5.  **Design File Access:** Is your Figma/Penpot link included and set to **"Anyone with the link can view"**?
-6.  **Documentation:** Have you deleted the original assignment text from the `README.md` and replaced it with your own project documentation?
-
-> **By submitting your work, you acknowledge that failure to meet these criteria effectively ends your application process.**
+- **Virtualize the tree.** Right now every visible row renders as a real DOM node. Fine for hundreds of files, but a vault with tens of thousands of files would get slow. Libraries like `react-window` fix this by only rendering rows currently on screen.
+- **Move Recent Activity to a backend.** So it follows the user across devices, not just one browser.
+- **Wire up the Upload button.** It's in the UI but doesn't do anything yet.
+- **Drag-and-drop** files between folders.
+- **Multi-select** (shift-click, ctrl-click) for bulk actions like delete or move.
+- **Debounce the search input** so it doesn't re-filter the tree on every keystroke once the file list gets large.
