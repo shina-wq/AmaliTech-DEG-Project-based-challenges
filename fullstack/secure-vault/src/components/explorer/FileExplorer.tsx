@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import data from '../../data/data.json'
 import type { TreeNode as TreeNodeType, FileNode } from '../../types/tree'
 import { TreeNode } from './TreeNode'
+import { Badge } from '../ui/Badge'
 import { buildParentMap, filterTree, getVisibleNodes } from '../../utils/tree'
 import { useTreeNavigation } from '../../hooks/useTreeNavigation'
 
@@ -56,9 +57,9 @@ export function FileExplorer({ searchQuery, selectedFile, onSelectFile }: FileEx
     >
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-text">Files</h2>
-        <span className="rounded-sm bg-surface-hover px-2 py-0.5 text-xs text-text-muted">
+        <Badge>
           {countFiles(displayTree)} {isSearching ? 'matches' : 'items'}
-        </span>
+        </Badge>
       </div>
 
       {isSearching && displayTree.length === 0 ? (

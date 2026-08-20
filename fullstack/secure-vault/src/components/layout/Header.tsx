@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { LuSearch, LuShield, LuUpload, LuX } from 'react-icons/lu'
+import { Button } from '../ui/Button'
+import { IconButton } from '../ui/IconButton'
+import { SearchInput } from '../ui/SearchInput'
 
 interface HeaderProps {
   searchQuery: string
   onSearchChange: (value: string) => void
 }
 
-export function Header({searchQuery, onSearchChange}: HeaderProps) {
+export function Header({ searchQuery, onSearchChange }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false)
 
   return (
@@ -24,72 +27,45 @@ export function Header({searchQuery, onSearchChange}: HeaderProps) {
         </div>
       </div>
 
-      {/* Search bar */}
-      <div className="absolute left-1/2 hidden w-full max-w-sm -translate-x-1/2 items-center gap-2 rounded-md border border-border bg-bg px-3 py-1.5 transition-colors focus-within:border-accent/60 md:flex">
-        <LuSearch
-          size={14}
-          className="shrink-0 text-text-dim"
-          aria-hidden="true"
-        />
-
-        <input
-          type="search"
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search files and folders..."
-          className="w-full bg-transparent text-sm text-text placeholder:text-text-dim focus-visible:outline-none"
-        />
-      </div>
+      {/* Search bar (desktop) */}
+      <SearchInput
+        value={searchQuery}
+        onChange={(e) => onSearchChange(e.target.value)}
+        placeholder="Search files and folders..."
+        containerClassName="absolute left-1/2 hidden w-full max-w-sm -translate-x-1/2 md:flex"
+      />
 
       {/* Right-side actions */}
       <div className="ml-auto flex shrink-0 items-center gap-2">
         {/* Mobile: standalone icon-only search trigger */}
-        <button
-          type="button"
+        <IconButton
           aria-label={searchOpen ? 'Close search' : 'Search'}
           onClick={() => setSearchOpen((open) => !open)}
-          className="flex h-9 w-9 items-center justify-center rounded-md text-text-muted hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent md:hidden cursor-pointer"
+          className="md:hidden"
         >
-          {searchOpen ? (
-            <LuX size={18} aria-hidden="true" />
-          ) : (
-            <LuSearch size={18} aria-hidden="true" />
-          )}
-        </button>
+          {searchOpen ? <LuX size={18} aria-hidden="true" /> : <LuSearch size={18} aria-hidden="true" />}
+        </IconButton>
 
         {searchOpen && (
-          <div className="absolute inset-x-4 top-full z-10 mt-2 flex items-center gap-2 rounded-md border border-border bg-bg px-3 py-2 shadow-lg transition-colors focus-within:border-accent/60 md:hidden">
-            <LuSearch size={14} className="shrink-0 text-text-dim" aria-hidden="true" />
-
-            <input
-              type="search"
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              autoFocus
-              placeholder="Search files and folders..."
-              className="w-full bg-transparent text-sm text-text placeholder:text-text-dim focus:outline-none"
-            />
-          </div>
+          <SearchInput
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            autoFocus
+            placeholder="Search files and folders..."
+            containerClassName="absolute inset-x-4 top-full z-10 mt-2 shadow-lg md:hidden"
+          />
         )}
 
         {/* Mobile: standalone icon-only upload trigger */}
-        <button
-          type="button"
-          aria-label="Upload file"
-          className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-bg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg md:hidden cursor-pointer"
-        >
+        <IconButton variant="solid" aria-label="Upload file" className="md:hidden">
           <LuUpload size={18} strokeWidth={2.5} aria-hidden="true" />
-        </button>
+        </IconButton>
 
         {/* Desktop */}
-        <button
-          type="button"
-          aria-label="Upload file"
-          className="hidden h-9 items-center gap-2 px-3 text-sm font-medium justify-center rounded-md bg-accent text-bg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg md:flex cursor-pointer"
-        >
+        <Button aria-label="Upload file" className="hidden md:flex">
           <LuUpload size={14} strokeWidth={2.5} aria-hidden="true" />
           <span>Upload file</span>
-        </button>
+        </Button>
 
         {/* Avatar */}
         <div
